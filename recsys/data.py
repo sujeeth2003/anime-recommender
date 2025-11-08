@@ -11,3 +11,11 @@ GENRES = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Mecha"
           "Slice of Life", "Sports", "Supernatural", "Thriller", "Historical", "Psychological", "School", "Shounen", "Seinen"]
 
 
+def load_kaggle(directory):
+    anime = pd.read_csv(f"{directory}/anime.csv")
+    ratings = pd.read_csv(f"{directory}/rating.csv")
+    anime["genre"] = anime["genre"].fillna("")
+    ratings = ratings[ratings["rating"] >= 1].copy()          # drop the -1 'watched but unrated' rows for explicit-rating models
+    return anime, ratings
+
+
