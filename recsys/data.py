@@ -47,3 +47,13 @@ def synthetic(n_users=3000, n_items=800, avg_ratings=40, seed=0, k_latent=6):
     anime["rating"] = anime["anime_id"].map(ratings.groupby("anime_id")["rating"].mean())
     return anime, ratings
 
+
+def split_per_user(ratings, test_frac=0.2, seed=0, min_keep=3):
+    """Hold out a random fraction of EACH user's ratings (so every test user has training history)."""
+    rng = np.random.default_rng(seed)
+    test_idx = []
+    for _, idx in ratings.groupby("user_id").indices.items():
+        if len(idx) > min_keep + 1:
+            test_idx += list(rng.choice(idx, size=max(1, int(len(idx) * test_frac)), replace=False))
+    mask = np.zeros(len(ratings), bool); mask[test_idx] = True
+    return ratings[~mask].reset_index(drop=True), ratings[mask].reset_index(drop=True)
