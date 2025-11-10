@@ -59,3 +59,20 @@ class BiasBaseline:
         return self.mu + self.bu[u] + self.bi[i]
 
 
+class ALS:
+    """Alternating least squares with weighted-lambda regularisation (ALS-WR, Zhou et al. 2008) on explicit ratings,
+    fit to the residual of a bias baseline. Each half-step solves one small k x k ridge system per user (or item)."""
+
+    def __init__(self, k=24, reg=0.08, iters=12, seed=0):
+        self.k, self.reg, self.iters, self.rng = k, reg, iters, np.random.default_rng(seed)
+
+    def fit(self, R):
+        self.base = BiasBaseline().fit(R)
+        coo = R.tocoo()
+        res = coo.data - self.base.mu - self.base.bu[coo.row] - self.base.bi[coo.col]
+        Rres = sp.csr_matrix((res, (coo.row, coo.col)), shape=R.shape); Rt = Rres.T.tocsr()
+        self.U = self.rng.normal(0, 0.1, (R.shape[0], self.k)); self.V = self.rng.normal(0, 0.1, (R.shape[1], self.k))
+        for _ in range(self.iters):
+            self.U = self._solve(Rres, self.V); self.V = self._solve(Rt, self.U)
+        return self
+
