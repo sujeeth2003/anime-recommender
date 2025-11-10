@@ -17,3 +17,18 @@ class Index:
         return sp.csr_matrix((r.rating.to_numpy(float), (u, i)), shape=(self.nu, self.ni))
 
 
+class Popularity:
+    """Bayesian (damped) mean rating: a title with 3 ratings of 10 must not outrank one with 3000 ratings of 9."""
+
+    def __init__(self, damping=20):
+        self.damping = damping
+
+    def fit(self, R):
+        cnt = np.asarray((R > 0).sum(0)).ravel(); tot = np.asarray(R.sum(0)).ravel()
+        self.mu = tot.sum() / max(cnt.sum(), 1)
+        self.item_score = (tot + self.damping * self.mu) / (cnt + self.damping)
+        return self
+
+    def predict_all(self, u):
+        return self.item_score
+
