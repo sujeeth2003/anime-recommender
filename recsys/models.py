@@ -32,3 +32,23 @@ class Popularity:
     def predict_all(self, u):
         return self.item_score
 
+    def predict(self, u, i):
+        return self.item_score[i]
+
+
+class BiasBaseline:
+    """global mean + item bias + user bias (the standard strong baseline for rating prediction)."""
+
+    def __init__(self, reg=10.0):
+        self.reg = reg
+
+    def fit(self, R):
+        coo = R.tocoo(); self.mu = coo.data.mean()
+        self.bi = np.zeros(R.shape[1]); self.bu = np.zeros(R.shape[0])
+        for _ in range(8):
+            res = coo.data - self.mu - self.bu[coo.row]
+            self.bi = np.bincount(coo.col, res, R.shape[1]) / (np.bincount(coo.col, minlength=R.shape[1]) + self.reg)
+            res = coo.data - self.mu - self.bi[coo.col]
+            self.bu = np.bincount(coo.row, res, R.shape[0]) / (np.bincount(coo.row, minlength=R.shape[0]) + self.reg)
+        return self
+
