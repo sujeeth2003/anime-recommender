@@ -76,3 +76,18 @@ class ALS:
             self.U = self._solve(Rres, self.V); self.V = self._solve(Rt, self.U)
         return self
 
+    def _solve(self, M, F):
+        out = np.zeros((M.shape[0], self.k)); eye = np.eye(self.k)
+        for r in range(M.shape[0]):
+            s, e = M.indptr[r], M.indptr[r + 1]
+            if s == e: continue
+            Fi = F[M.indices[s:e]]
+            out[r] = np.linalg.solve(Fi.T @ Fi + self.reg * (e - s) * eye, Fi.T @ M.data[s:e])
+        return out
+
+    def predict_all(self, u):
+        return self.base.predict_all(u) + self.V @ self.U[u]
+
+    def predict(self, u, i):
+        return self.base.predict(u, i) + np.einsum("ij,ij->i", self.U[u], self.V[i])
+
