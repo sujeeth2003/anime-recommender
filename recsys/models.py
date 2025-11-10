@@ -52,3 +52,10 @@ class BiasBaseline:
             self.bu = np.bincount(coo.row, res, R.shape[0]) / (np.bincount(coo.row, minlength=R.shape[0]) + self.reg)
         return self
 
+    def predict_all(self, u):
+        return self.mu + self.bu[u] + self.bi
+
+    def predict(self, u, i):
+        return self.mu + self.bu[u] + self.bi[i]
+
+
