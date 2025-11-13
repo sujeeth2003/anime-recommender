@@ -150,3 +150,8 @@ class Hybrid:
         self.prof = sp.diags(1 / norms) @ prof
         self.Xn = Xn
 
+    def predict_all(self, u):
+        collab = self.als.predict_all(u)
+        cont = np.asarray((self.Xn @ self.prof[u].T).todense()).ravel()
+        # cold-start items (no collaborative signal) get only the content part, rescaled to the rating range
+        return self.alpha * collab + (1 - self.alpha) * (collab.mean() + 3.0 * (cont - cont.mean()))
