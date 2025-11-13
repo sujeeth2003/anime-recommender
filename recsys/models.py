@@ -91,3 +91,20 @@ class ALS:
     def predict(self, u, i):
         return self.base.predict(u, i) + np.einsum("ij,ij->i", self.U[u], self.V[i])
 
+
+class ImplicitALS:
+    """Implicit-feedback ALS (Hu, Koren, Volinsky 2008): the model learns to reproduce WHO WATCHED WHAT, with confidence
+    1 + alpha*rating on watched pairs, and a small weight on every unwatched pair. This optimises the thing a
+    'what should I watch next' shelf is judged on (ranking watched titles first), unlike rating-prediction ALS."""
+
+    def __init__(self, k=32, reg=0.1, alpha=4.0, iters=10, seed=0):
+        self.k, self.reg, self.alpha, self.iters, self.rng = k, reg, alpha, iters, np.random.default_rng(seed)
+
+    def fit(self, R):
+        C = R.copy().tocsr(); C.data = 1.0 + self.alpha * C.data / 10.0        # confidence on observed pairs
+        Ct = C.T.tocsr()
+        self.U = self.rng.normal(0, 0.1, (R.shape[0], self.k)); self.V = self.rng.normal(0, 0.1, (R.shape[1], self.k))
+        for _ in range(self.iters):
+            self.U = self._solve(C, self.V); self.V = self._solve(Ct, self.U)
+        return self
+
