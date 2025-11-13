@@ -108,3 +108,17 @@ class ImplicitALS:
             self.U = self._solve(C, self.V); self.V = self._solve(Ct, self.U)
         return self
 
+    def _solve(self, C, F):
+        FtF = F.T @ F + self.reg * np.eye(self.k)
+        out = np.zeros((C.shape[0], self.k))
+        for r in range(C.shape[0]):
+            s, e = C.indptr[r], C.indptr[r + 1]
+            if s == e: continue
+            Fi, c = F[C.indices[s:e]], C.data[s:e]
+            A = FtF + (Fi.T * (c - 1.0)) @ Fi                # F^T (C_u - I) F restricted to observed items, plus F^T F
+            out[r] = np.linalg.solve(A, (Fi.T * c).sum(axis=1))
+        return out
+
+    def predict_all(self, u):
+        return self.V @ self.U[u]
+
