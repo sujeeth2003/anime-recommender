@@ -122,3 +122,17 @@ class ImplicitALS:
     def predict_all(self, u):
         return self.V @ self.U[u]
 
+
+class ContentIndex:
+    """TF-IDF over genre strings (+ media type): a title's fingerprint that works even with ZERO ratings (cold start)."""
+
+    def __init__(self, anime):
+        text = (anime["genre"].fillna("") + " " + anime["type"].fillna("").astype(str)).str.replace(",", " ")
+        self.X = TfidfVectorizer(token_pattern=r"[A-Za-z\-]+").fit_transform(text)
+        self.sim_cache = {}
+
+    def similar(self, i, n=10):
+        s = (self.X @ self.X[i].T).toarray().ravel(); s[i] = -1
+        top = np.argsort(-s)[:n]
+        return top, s[top]
+
