@@ -136,3 +136,17 @@ class ContentIndex:
         top = np.argsort(-s)[:n]
         return top, s[top]
 
+
+class Hybrid:
+    """Collaborative score (ALS) + content score (similarity to the user's highly rated titles).
+    The content part is what lets brand-new titles be recommended before anyone has rated them."""
+
+    def __init__(self, als, content, R, alpha=0.75, like_threshold=8):
+        self.als, self.content, self.alpha = als, content, alpha
+        liked = (R >= like_threshold).astype(float).tocsr()
+        Xn = content.X
+        prof = liked @ Xn                                  # user's taste vector in genre space
+        norms = np.sqrt(np.asarray(prof.multiply(prof).sum(1))).ravel() + 1e-9
+        self.prof = sp.diags(1 / norms) @ prof
+        self.Xn = Xn
+
