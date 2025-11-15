@@ -25,3 +25,18 @@ def main():
     print(f"data: {src}: {idx.nu} users x {idx.ni} titles, {len(ratings)} ratings ({len(ratings) / (idx.nu * idx.ni):.1%} dense); "
           f"train {len(train)} / test {len(test)}\n")
 
+    t0 = time.time()
+    pop = Popularity().fit(R); bias = BiasBaseline().fit(R); als = ALS().fit(R); ials = ImplicitALS().fit(R)
+    content = ContentIndex(anime); hyb = Hybrid(als, content, R)
+    print(f"fitted in {time.time() - t0:.1f}s\n")
+    models = {"popularity (damped mean)": pop, "bias baseline": bias, "ALS ratings (k=24)": als, "implicit ALS (ranking)": ials, "hybrid ALS + content": hyb}
+    print(f"{'model':<28}{'RMSE':>7}{'P@10':>8}{'R@10':>8}{'NDCG@10':>9}{'coverage':>10}")
+    base = None
+    for name, m in models.items():
+        rm = rmse_on(m, idx, test) if hasattr(m, "predict") else float("nan")
+        rk = ranking_metrics(m, idx, R, test)
+        base = base or rm
+        print(f"{name:<28}{rm:>7.3f}{rk['precision@k']:>8.3f}{rk['recall@k']:>8.3f}{rk['ndcg@k']:>9.3f}{rk['coverage']:>10.1%}")
+    rm_als = rmse_on(als, idx, test)
+    print(f"\nALS reduces RMSE by {1 - rm_als / base:.0%} versus the popularity baseline (implicit ALS and the hybrid have no per-pair rating predictor, ranking only).")
+
