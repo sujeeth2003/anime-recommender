@@ -30,3 +30,17 @@ class RecsysTests(unittest.TestCase):
         self.assertLess(m.item_score[0], 10.0); self.assertGreater(m.item_score[0], m.mu)   # shrunk toward the mean
         self.assertLess(abs(m.item_score[1] - m.mu), abs(9.9 - m.mu) + 1)
 
+    def test_als_beats_baselines_on_rmse_and_ranking(self):
+        pop = Popularity().fit(self.R); bias = BiasBaseline().fit(self.R); als = ALS(k=6, reg=0.4, iters=8).fit(self.R)
+        r_pop, r_bias, r_als = (rmse_on(m, self.idx, self.test) for m in (pop, bias, als))
+        self.assertLess(r_als, min(r_bias, r_pop) * 0.85)                 # personalisation clearly beats non-personalised scores
+        rk_pop = ranking_metrics(pop, self.idx, self.R, self.test, max_users=300)
+        from recsys.models import ImplicitALS
+        rk_imp = ranking_metrics(ImplicitALS(k=16, iters=6).fit(self.R), self.idx, self.R, self.test, max_users=300)
+        self.assertGreater(rk_imp["ndcg@k"], rk_pop["ndcg@k"])          # the ranking model beats popularity at top-N
+
+    def test_recommendations_exclude_already_rated(self):
+        als = ALS(k=8, iters=4).fit(self.R)
+        s = als.predict_all(0).copy(); s[self.R[0].indices] = -np.inf
+        self.assertFalse(set(np.argsort(-s)[:10]) & set(self.R[0].indices))
+
