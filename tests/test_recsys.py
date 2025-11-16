@@ -44,3 +44,12 @@ class RecsysTests(unittest.TestCase):
         s = als.predict_all(0).copy(); s[self.R[0].indices] = -np.inf
         self.assertFalse(set(np.argsort(-s)[:10]) & set(self.R[0].indices))
 
+    def test_content_similarity_finds_shared_genres(self):
+        c = ContentIndex(self.anime)
+        top, sims = c.similar(0, 5)
+        g0 = set(self.anime.genre.iloc[0].split(", "))
+        self.assertTrue(all(len(g0 & set(self.anime.genre.iloc[i].split(", "))) >= 1 for i in top[:3]))
+
+
+if __name__ == "__main__":
+    unittest.main()
