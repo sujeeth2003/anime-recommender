@@ -40,3 +40,15 @@ def main():
     rm_als = rmse_on(als, idx, test)
     print(f"\nALS reduces RMSE by {1 - rm_als / base:.0%} versus the popularity baseline (implicit ALS and the hybrid have no per-pair rating predictor, ranking only).")
 
+    u = 0; uid = sorted(idx.users, key=idx.users.get)[u]
+    seen = R[u].indices; liked = sorted(seen, key=lambda i: -R[u, i])[:3]
+    print(f"\n--- recommendations for user {uid} ---")
+    print("because you rated highly:", ", ".join(anime.name.iloc[i] for i in liked))
+    s = ials.predict_all(u).copy(); s[seen] = -1e9
+    for i in s.argsort()[::-1][:5]:
+        sim_to = max(liked, key=lambda l: float((content.X[i] @ content.X[l].T).toarray()[0, 0]))
+        print(f"  {anime.name.iloc[i]:<12} [{anime.genre.iloc[i]}]  score {s[i]:.2f}  (similar to {anime.name.iloc[sim_to]})")
+
+
+if __name__ == "__main__":
+    main()
