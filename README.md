@@ -29,3 +29,11 @@ What this teaches:
 - The hybrid did not help here because the content signal is weak relative to the collaborative signal on this data; it is there for cold start, which this offline split does not measure (a proper cold-start evaluation needs titles held out entirely).
 - "Popularity is a strong baseline, so beat it honestly": the damped popularity baseline is *better* than the naive bias baseline on RMSE here.
 
+## Netflix-style output
+```
+because you rated highly: Title 43, Title 598, Title 82
+  Title 153 [Sports, Shounen, Action]  score 0.64  (similar to Title 43)
+  Title 751 [Thriller, Seinen]         score 0.63  (similar to Title 43)
+```
+The explanation line is the highest content-similarity title among the user's top-rated ones.
+
