@@ -37,3 +37,10 @@ because you rated highly: Title 43, Title 598, Title 82
 ```
 The explanation line is the highest content-similarity title among the user's top-rated ones.
 
+## Run
+```bash
+pip install numpy pandas scipy scikit-learn
+python -m unittest discover -s tests       # 5 tests
+python run_experiment.py                   # synthetic; add --kaggle DIR for the real data
+```
+At Kaggle scale the per-user solves in ALS are the cost (73k small ridge systems per half-iteration). They are independent, so they parallelise trivially; a production version would use `implicit`/GPU or vectorised batched solves.
