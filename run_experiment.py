@@ -19,8 +19,11 @@ def main():
     ap.add_argument("--users", type=int, default=3000)
     ap.add_argument("--items", type=int, default=800)
     a = ap.parse_args()
-    anime, ratings = load_kaggle(a.kaggle) if a.kaggle else synthetic(a.users, a.items)
-    src = a.kaggle or "synthetic (Kaggle schema)"
+    if a.mal:
+        anime, ratings = load_mal2023(a.mal, a.users)
+    else:
+        anime, ratings = load_kaggle(a.kaggle) if a.kaggle else synthetic(a.users, a.items)
+    src = a.mal or a.kaggle or "synthetic (Kaggle schema)"
     train, test = split_per_user(ratings)
     idx = Index(ratings, anime)
     R = idx.matrix(train)
