@@ -7,7 +7,7 @@
 import argparse
 import time
 
-from recsys.data import load_kaggle, split_per_user, synthetic
+from recsys.data import load_kaggle, load_mal2023, split_per_user, synthetic
 from recsys.evaluate import ranking_metrics, rmse_on
 from recsys.models import ALS, BiasBaseline, ContentIndex, Hybrid, ImplicitALS, Index, Popularity
 
