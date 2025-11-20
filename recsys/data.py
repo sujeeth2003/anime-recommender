@@ -19,6 +19,28 @@ def load_kaggle(directory):
     return anime, ratings
 
 
+def load_mal2023(directory, n_users=15000, min_ratings=20, seed=0):
+    """MyAnimeList 2023 dataset (kaggle.com/datasets/dbdmobile/myanimelist-dataset).
+    Uses two of its six files:
+      anime-dataset-2023.csv   anime_id, Name, Genres, Type, Score, Members, ...   (the catalogue: ~25k titles)
+      users-score-2023.csv     user_id, Username, anime_id, Anime Title, rating    (24.3M explicit 1-10 ratings, 270k users)
+    The other four are not needed: final_animedataset.csv and user-filtered.csv are pre-joined/pre-filtered copies of the
+    same ratings, users-details-2023.csv is profile metadata, and anime-filtered.csv is an older catalogue.
+    A full ALS over 24M ratings needs a cluster-style solver, so this takes a reproducible random sample of `n_users`
+    users who rated at least `min_ratings` titles, keeping all of each sampled user's ratings."""
+    anime = pd.read_csv(f"{directory}/anime-dataset-2023.csv", usecols=["anime_id", "Name", "Genres", "Type", "Score", "Members"])
+    anime = anime.rename(columns={"Name": "name", "Genres": "genre", "Type": "type", "Score": "mal_score", "Members": "members"})
+    anime["genre"] = anime["genre"].replace("UNKNOWN", "").fillna("")
+    ratings = pd.read_csv(f"{directory}/users-score-2023.csv", usecols=["user_id", "anime_id", "rating"], dtype="int32")
+    ratings = ratings[ratings.anime_id.isin(anime.anime_id)]
+    counts = ratings.groupby("user_id").size()
+    eligible = counts[counts >= min_ratings].index.to_numpy()
+    keep = np.random.default_rng(seed).choice(eligible, size=min(n_users, len(eligible)), replace=False)
+    ratings = ratings[ratings.user_id.isin(keep)].reset_index(drop=True)
+    rated = anime[anime.anime_id.isin(ratings.anime_id)].reset_index(drop=True)      # catalogue = titles someone in the sample rated
+    return rated, ratings
+
+
 def synthetic(n_users=3000, n_items=800, avg_ratings=40, seed=0, k_latent=6):
     """Users and titles live in a latent taste space; a title's genres come from its latent position, so genre
     content genuinely carries signal (as in real data) but does not explain everything. Popularity is long-tailed."""
