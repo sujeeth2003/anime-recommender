@@ -15,6 +15,7 @@ from recsys.models import ALS, BiasBaseline, ContentIndex, Hybrid, ImplicitALS, 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--kaggle")
+    ap.add_argument("--mal", help="folder with the MyAnimeList 2023 files (anime-dataset-2023.csv, users-score-2023.csv)")
     ap.add_argument("--users", type=int, default=3000)
     ap.add_argument("--items", type=int, default=800)
     a = ap.parse_args()
