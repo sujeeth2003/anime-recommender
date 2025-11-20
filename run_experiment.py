@@ -1,7 +1,8 @@
 """Compare popularity, bias baseline, ALS and the hybrid; then show Netflix-style output for one user.
 
     python run_experiment.py                       # synthetic data with the Kaggle schema
-    python run_experiment.py --kaggle path/to/dir  # the real anime.csv + rating.csv
+    python run_experiment.py --kaggle path/to/dir  # the older CooperUnion anime.csv + rating.csv
+    python run_experiment.py --mal path/to/dir --users 15000   # MyAnimeList 2023 (6 CSVs)
 """
 import argparse
 import time
