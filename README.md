@@ -1,6 +1,6 @@
 # Anime Recommender (Netflix-style)
 
-Recommends what to watch next from the **Kaggle "Anime Recommendations Database"** (`anime.csv` + `rating.csv`, ~73k users x 12k titles): personalised top-N shelves with "because you rated X highly" explanations, and content-based fallback for titles nobody has rated yet.
+Recommends what to watch next from the **MyAnimeList 2023 dataset** ([Kaggle: dbdmobile/myanimelist-dataset](https://www.kaggle.com/datasets/dbdmobile/myanimelist-dataset)): personalised top-N shelves with "because you rated X highly" explanations, and a content-based fallback for titles nobody has rated yet.
 
 > **Data note:** the Kaggle files need a Kaggle login, so they are not bundled and I did not download them. The code reads the exact Kaggle schema (`python run_experiment.py --kaggle path/to/dir`, which also drops the `-1` "watched but unrated" rows for the explicit-rating models). The results below are on a **schema-identical synthetic dataset** (3,000 users x 800 titles, 5% dense, long-tailed popularity, genre-correlated taste), so they show the method and the trade-offs, **not** performance on the real data.
 
