@@ -14,6 +14,7 @@ from recsys.models import ALS, BiasBaseline, ContentIndex, Hybrid, ImplicitALS, 
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")           # real titles contain characters the Windows console codepage cannot print
     ap = argparse.ArgumentParser()
     ap.add_argument("--kaggle")
     ap.add_argument("--mal", help="folder with the MyAnimeList 2023 files (anime-dataset-2023.csv, users-score-2023.csv)")
