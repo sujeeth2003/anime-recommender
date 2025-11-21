@@ -5,6 +5,7 @@
     python run_experiment.py --mal path/to/dir --users 15000   # MyAnimeList 2023 (6 CSVs)
 """
 import argparse
+import sys
 import time
 
 from recsys.data import load_kaggle, load_mal2023, split_per_user, synthetic
