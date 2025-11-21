@@ -2,7 +2,16 @@
 
 Recommends what to watch next from the **MyAnimeList 2023 dataset** ([Kaggle: dbdmobile/myanimelist-dataset](https://www.kaggle.com/datasets/dbdmobile/myanimelist-dataset)): personalised top-N shelves with "because you rated X highly" explanations, and a content-based fallback for titles nobody has rated yet.
 
-> **Data note:** the Kaggle files need a Kaggle login, so they are not bundled and I did not download them. The code reads the exact Kaggle schema (`python run_experiment.py --kaggle path/to/dir`, which also drops the `-1` "watched but unrated" rows for the explicit-rating models). The results below are on a **schema-identical synthetic dataset** (3,000 users x 800 titles, 5% dense, long-tailed popularity, genre-correlated taste), so they show the method and the trade-offs, **not** performance on the real data.
+## Data
+The download has six CSVs. Two are used:
+| File | Rows | Used for |
+|---|---|---|
+| `anime-dataset-2023.csv` | 25k titles | catalogue: name, genres, type |
+| `users-score-2023.csv` | 24.3M ratings, 270k users, ratings 1-10 | the ratings |
+
+The other four are not needed: `final_animedataset.csv` and `user-filtered.csv` are pre-joined / pre-filtered copies of the same ratings, `users-details-2023.csv` is profile metadata and `anime-filtered.csv` is an older catalogue. The files are not in this repo (they are several GB): download from Kaggle and point `--mal` at the folder.
+
+**Sampling:** ALS solves one small system per user per iteration, so a full 24M-rating run is a cluster job. The experiment takes a reproducible random sample of **15,000 users who rated 20+ titles** (all of their ratings kept): **2.19M ratings over 12,876 titles, 1.1% dense**, 80/20 split per user. Numbers below are on that sample.
 
 ## Models (`recsys/models.py`)
 | Model | What it is |
