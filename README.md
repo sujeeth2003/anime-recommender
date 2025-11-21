@@ -23,7 +23,7 @@ The other four are not needed: `final_animedataset.csv` and `user-filtered.csv` 
 | Content index | TF-IDF over genre + type: works with zero ratings (cold start) |
 | Hybrid | ALS score + content-similarity to the user's liked titles |
 
-## Results (synthetic; hold out 20% of each user's ratings; candidates = every unrated title; relevant = held-out rating >= 8)
+## Results (real data, 15k-user sample; hold out 20% of each user's ratings; candidates = every unrated title; relevant = held-out rating >= 8)
 ```
 model                          RMSE    P@10    R@10  NDCG@10  coverage
 popularity (damped mean)      1.722   0.015   0.068    0.052      2.0%
