@@ -26,11 +26,11 @@ The other four are not needed: `final_animedataset.csv` and `user-filtered.csv` 
 ## Results (real data, 15k-user sample; hold out 20% of each user's ratings; candidates = every unrated title; relevant = held-out rating >= 8)
 ```
 model                          RMSE    P@10    R@10  NDCG@10  coverage
-popularity (damped mean)      1.722   0.015   0.068    0.052      2.0%
-bias baseline                 1.742   0.014   0.064    0.031      1.9%
-ALS ratings (k=24)            1.151   0.013   0.055    0.032     70.6%
-implicit ALS (ranking)          n/a   0.029   0.124    0.092     28.1%
-hybrid ALS + content            n/a   0.013   0.056    0.033     72.4%
+popularity (damped mean)      1.515   0.036   0.026    0.043      0.2%
+bias baseline                 1.287   0.018   0.014    0.017      0.2%
+ALS ratings (k=24)            1.232   0.015   0.011    0.016     11.8%
+implicit ALS (ranking)          n/a   0.256   0.224    0.338      6.0%
+hybrid ALS + content            n/a   0.020   0.014    0.023     11.5%
 ```
 What this teaches:
 - **Predicting ratings is not ranking.** ALS cuts RMSE by 33% versus popularity but is *no better at top-N* (NDCG 0.032 vs 0.052): it is good at "how would this user score this title" and poor at "which titles will this user actually watch", because people mostly watch popular titles and rating models ignore that.
