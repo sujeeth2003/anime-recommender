@@ -36,7 +36,7 @@ What this shows:
 - **Predicting ratings is not ranking.** ALS cuts RMSE by **19%** versus the popularity baseline (1.515 -> 1.232), but its top-10 is *worse* than popularity (NDCG 0.016 vs 0.043). It answers "how would this user score this title", not "what will this user watch".
 - **The implicit model fixes ranking:** NDCG@10 **0.338, 7.9x popularity**, with precision@10 of 0.256 (about 1 in 4 recommended titles is one the user later rated 8+). It is personal: popularity shows everyone the same ~26 titles (0.2% coverage of the catalogue) while implicit ALS spreads across 6%.
 - The hybrid does not help top-N here; the genre signal is weak next to 2M real ratings. It exists for cold start, which this offline split does not measure.
-- Damped popularity is a strong baseline on RMSE only if you ignore user bias: the simple bias baseline (1.287) beats it, as expected on real data.
+- On RMSE the simple user+item bias baseline (1.287) already beats damped popularity (1.515); ALS adds a further 4% on top of it.
 - Earlier I ran the same code on a synthetic dataset while I had no access to the real files; those numbers (33% RMSE, 1.8x) do not carry over: the real data shows a smaller rating gain and a much larger ranking gain.
 
 ## Netflix-style output (real titles, one sampled user)
