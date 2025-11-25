@@ -55,4 +55,4 @@ python -m unittest discover -s tests                        # 5 tests
 python run_experiment.py --mal "path/to/folder" --users 15000   # real MyAnimeList data, ~1 minute
 python run_experiment.py                                    # offline synthetic data with the same schema
 ```
-At Kaggle scale the per-user solves in ALS are the cost (73k small ridge systems per half-iteration). They are independent, so they parallelise trivially; a production version would use `implicit`/GPU or vectorised batched solves.
+`--kaggle DIR` still reads the older CooperUnion `anime.csv` + `rating.csv` format.
