@@ -41,9 +41,10 @@ What this shows:
 
 ## Netflix-style output (real titles, one sampled user)
 ```
-because you rated highly: Title 43, Title 598, Title 82
-  Title 153 [Sports, Shounen, Action]  score 0.64  (similar to Title 43)
-  Title 751 [Thriller, Seinen]         score 0.63  (similar to Title 43)
+because you rated highly: D.N.Angel, Full Metal Panic? Fumoffu, Love Hina
+  Full Metal Panic!                        [Action, Comedy, Sci-Fi]           score 0.73  (similar to Full Metal Panic? Fumoffu)
+  Onegai Teacher                           [Drama, Romance, Sci-Fi]           score 0.72  (similar to D.N.Angel)
+  Love Hina Again                          [Comedy, Drama, Romance, Ecchi]    score 0.70  (similar to Love Hina)
 ```
 The explanation line is the highest content-similarity title among the user's top-rated ones.
 
