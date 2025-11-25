@@ -39,7 +39,7 @@ What this shows:
 - Damped popularity is a strong baseline on RMSE only if you ignore user bias: the simple bias baseline (1.287) beats it, as expected on real data.
 - Earlier I ran the same code on a synthetic dataset while I had no access to the real files; those numbers (33% RMSE, 1.8x) do not carry over: the real data shows a smaller rating gain and a much larger ranking gain.
 
-## Netflix-style output
+## Netflix-style output (real titles, one sampled user)
 ```
 because you rated highly: Title 43, Title 598, Title 82
   Title 153 [Sports, Shounen, Action]  score 0.64  (similar to Title 43)
