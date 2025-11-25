@@ -32,11 +32,12 @@ ALS ratings (k=24)            1.232   0.015   0.011    0.016     11.8%
 implicit ALS (ranking)          n/a   0.256   0.224    0.338      6.0%
 hybrid ALS + content            n/a   0.020   0.014    0.023     11.5%
 ```
-What this teaches:
-- **Predicting ratings is not ranking.** ALS cuts RMSE by 33% versus popularity but is *no better at top-N* (NDCG 0.032 vs 0.052): it is good at "how would this user score this title" and poor at "which titles will this user actually watch", because people mostly watch popular titles and rating models ignore that.
-- **The implicit model fixes ranking**: NDCG@10 0.092, **1.8x popularity**, with 14x the catalogue coverage of popularity (28% of titles recommended to someone vs 2%), so the shelves are personal instead of everyone seeing the same hits.
-- The hybrid did not help here because the content signal is weak relative to the collaborative signal on this data; it is there for cold start, which this offline split does not measure (a proper cold-start evaluation needs titles held out entirely).
-- "Popularity is a strong baseline, so beat it honestly": the damped popularity baseline is *better* than the naive bias baseline on RMSE here.
+What this shows:
+- **Predicting ratings is not ranking.** ALS cuts RMSE by **19%** versus the popularity baseline (1.515 -> 1.232), but its top-10 is *worse* than popularity (NDCG 0.016 vs 0.043). It answers "how would this user score this title", not "what will this user watch".
+- **The implicit model fixes ranking:** NDCG@10 **0.338, 7.9x popularity**, with precision@10 of 0.256 (about 1 in 4 recommended titles is one the user later rated 8+). It is personal: popularity shows everyone the same ~26 titles (0.2% coverage of the catalogue) while implicit ALS spreads across 6%.
+- The hybrid does not help top-N here; the genre signal is weak next to 2M real ratings. It exists for cold start, which this offline split does not measure.
+- Damped popularity is a strong baseline on RMSE only if you ignore user bias: the simple bias baseline (1.287) beats it, as expected on real data.
+- Earlier I ran the same code on a synthetic dataset while I had no access to the real files; those numbers (33% RMSE, 1.8x) do not carry over: the real data shows a smaller rating gain and a much larger ranking gain.
 
 ## Netflix-style output
 ```
